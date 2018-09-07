@@ -61,8 +61,8 @@ void MakeSWMuon::Loop()
 	   float closest_me0_dr;
    
    Long64_t nbytes = 0, nb = 0;
-   //for (Long64_t jentry=0; jentry<nentries;jentry++) {
-   for (Long64_t jentry=0; jentry<100;jentry++) {
+   for (Long64_t jentry=0; jentry<nentries;jentry++) {
+   //for (Long64_t jentry=0; jentry<100;jentry++) {
       Long64_t ientry = LoadTree(jentry);
       if (ientry < 0) break;
       nb = fChain->GetEntry(jentry);   nbytes += nb;
@@ -98,10 +98,10 @@ void MakeSWMuon::Loop()
       if(closest_dr == 9999) continue;
       if(me0Count == 0) continue;
 
-      cout<<"me0N_ : "<< me0N_ <<endl;
-      cout<<"genPartPt = "<<genPartPt->at(0)<<endl;
-      cout<<"closest_me0 = "<<closest_me0<<endl;
-      cout<<"closest_dr = "<<closest_dr<<endl;
+      //cout<<"me0N_ : "<< me0N_ <<endl;
+      //cout<<"genPartPt = "<<genPartPt->at(0)<<endl;
+      //cout<<"closest_me0 = "<<closest_me0<<endl;
+      //cout<<"closest_dr = "<<closest_dr<<endl;
       TVector3 emvector;
 
 //      abs_pterr = fabs(genPartPt->at(0)-propgenElPartPt->at(0))/genPartPt->at(0); // !!!!! Use propgenElPartPt instead closest_me0 Pt !!!!!
@@ -126,11 +126,11 @@ void MakeSWMuon::Loop()
 
       int fpix_size = fRecHitGx->size();
 
-      cout<<"fpix_size = "<<fpix_size<<endl;
+      //cout<<"fpix_size = "<<fpix_size<<endl;
 
       for( int a = 0; a < fpix_size; a++){
 
-	      cout<<"fRecHitDisk = "<<fRecHitDisk->at(a)<<endl;
+	      //cout<<"fRecHitDisk = "<<fRecHitDisk->at(a)<<endl;
 
 	      if( fRecHitDisk->at(a) == 1 ){
 		      layers[1]++;
@@ -164,8 +164,10 @@ void MakeSWMuon::Loop()
       	}
       }
 
-      cout<<"n_pixels = "<<n_pixels<<endl;
+      //cout<<"n_pixels = "<<n_pixels<<endl;
 
+      //cout << endl;
+      //cout << "Process: " << jentry << endl;
       if( n_pixels >= 1 ){
       	for( std::vector<int>::iterator first_hit = hitted_layers.begin()+1; first_hit != hitted_layers.end(); first_hit++){
 		for ( int k = 0; k < layers[*first_hit]; k++){
@@ -181,6 +183,7 @@ void MakeSWMuon::Loop()
 			if( *first_hit == 5 ) pixel_vector = fifth_disk_hits[k];
 
 			dPhi = deltaPhi(pixel_vector.Phi(), closest_me0Phi);
+			//cout << "Delta phi of pixel vector and closest ME0 phi: " << dPhi << endl;
 
 			if( *first_hit == 1){
 				if( fabs(closest_me0Eta) >= 2.0 && fabs(closest_me0Eta) < 2.4  ) dPhi_l1me0_pix[0][0].push_back(dPhi);
@@ -204,11 +207,43 @@ void MakeSWMuon::Loop()
 			}
 		}
 	}
+	//cout << endl;
       }
    }// event loop
 
+   // Check sorting
+   /* 
    for( int pixel = 0; pixel < 5; pixel++){
    	for( int i = 0; i < 2; i++){
+
+		int vec_size = dPhi_l1me0_pix[pixel][i].size();
+		if( vec_size != 0 )
+		{
+			cout << "Which pixel: " << pixel << ", which region: " << i << endl;
+			cout << "  Before sort" << endl;
+			cout << "  ============" << endl;
+			for( int j = 0; j < vec_size; j++) 
+				cout << "    Delta phi: " << dPhi_l1me0_pix[pixel][i].at(j) << endl;
+		}
+
+		std::sort (dPhi_l1me0_pix[pixel][i].begin(), dPhi_l1me0_pix[pixel][i].end());
+		
+		if( vec_size != 0 )
+		{
+			cout << endl;
+			cout << "  After sort" << endl;
+			cout << "  ============" << endl;
+			for( int j = 0; j < vec_size; j++) 
+				cout << "    Delta phi: " << dPhi_l1me0_pix[pixel][i].at(j) << endl;
+		}
+
+	}
+   }
+   */
+    
+   for( int pixel = 0; pixel < 5; pixel++){
+   	for( int i = 0; i < 2; i++){
+
 		std::sort (dPhi_l1me0_pix[pixel][i].begin(), dPhi_l1me0_pix[pixel][i].end());
 
 		if( dPhi_l1me0_pix[pixel][i].size() != 0 ){
@@ -217,13 +252,14 @@ void MakeSWMuon::Loop()
 		}
 	}
    }
+   
    }// et loop
 
    TGraphErrors* median_gr[5][2];
    for( int j = 0; j < 5; j++){
 	   for( int i = 0; i < 2; i++){
 		   int point_size = x[j][i].size();
-		   median_gr[j][i] = new TGraphErrors(point_size, &x[j][i][0], &x_err[j][i][0], &median_err[j][i][0]);
+		   median_gr[j][i] = new TGraphErrors(point_size, &x[j][i][0], &median[j][i][0], &x_err[j][i][0], &median_err[j][i][0]);
 
 		   median_gr[j][i]->SetMarkerStyle(24);
 		   median_gr[j][i]->SetMarkerSize(0.3);
@@ -237,5 +273,6 @@ void MakeSWMuon::Loop()
 		   median_gr[j][i]->Write();
 	   }
    }
+
    file->Write();
 }
