@@ -11,31 +11,8 @@
 
 void MakeSWMuon::Loop()
 {
-//   In a ROOT session, you can do:
-//      root> .L MakeSWMuon.C
-//      root> MakeSWMuon t
-//      root> t.GetEntry(12); // Fill t data members with entry number 12
-//      root> t.Show();       // Show values of entry 12
-//      root> t.Show(16);     // Read and show values of entry 16
-//      root> t.Loop();       // Loop on all entries
-//
 
-//     This is the loop skeleton where:
-//    jentry is the global entry number in the chain
-//    ientry is the entry number in the current Tree
-//  Note that the argument to GetEntry must be:
-//    jentry for TChain::GetEntry
-//    ientry for TTree::GetEntry and TBranch::GetEntry
-//
-//       To read only selected branches, Insert statements like:
-// METHOD1:
-//    fChain->SetBranchStatus("*",0);  // disable all branches
-//    fChain->SetBranchStatus("branchname",1);  // activate branchname
-// METHOD2: replace line
-//    fChain->GetEntry(jentry);       //read all branches
-//by  b_branchname->GetEntry(ientry); //read only this branch
-
-	TFile *file = new TFile("roi_median.root","recreate");
+	TFile *file = new TFile("ME0_Pix1023.root","recreate");
 
 
     if (fChain == 0) return;
@@ -99,8 +76,8 @@ void MakeSWMuon::Loop()
 	      float me0Phi = me0SegPos.Phi();
 	      float me0Eta = me0SegPos.Eta();
 
-	      float dPhi = deltaPhi(propgenElPartPhi->at(0), me0Phi);
-	      float current_dr = sqrt( pow(dPhi,2) + pow(propgenElPartEta->at(0) - me0Eta,2) );
+	      float dPhi = deltaPhi(genPartPhi->at(0), me0Phi);
+	      float current_dr = sqrt( pow(dPhi,2) + pow(genPartEta->at(0) - me0Eta,2) );
 	      if( genPartPt->at(0) > high_et || genPartPt->at(0) < low_et ) continue; // !!!!! Use genPartPt instead me0 Pt !!!!!
 	      me0Count++;
 	      if(current_dr < closest_dr){
@@ -122,7 +99,7 @@ void MakeSWMuon::Loop()
       TVector3 emvector;
 
 //      abs_pterr = fabs(genPartPt->at(0)-propgenElPartPt->at(0))/genPartPt->at(0); // !!!!! Use propgenElPartPt instead closest_me0 Pt !!!!!
-      closest_me0Et = propgenElPartPt->at(0); // !!!!! Use propgenElPartPt instead closest_me0 Pt !!!!!
+      closest_me0Et = genPartPt->at(0); // !!!!! Use propgenElPartPt instead closest_me0 Pt !!!!!
       TVector3 me0SegPos;
       me0SegPos.SetXYZ(me0SegPosX->at(closest_me0), me0SegPosY->at(closest_me0), me0SegPosZ->at(closest_me0));
       closest_me0Eta = me0SegPos.Eta();
@@ -231,63 +208,63 @@ void MakeSWMuon::Loop()
       }
 //      if( n_pixels < 3 ) continue;
 
-      if( n_pixels >= 3 ){
-      	for( std::vector<int>::iterator first_hit = hitted_layers.begin()+1; first_hit != hitted_layers.end(); first_hit++){
-		for( std::vector<int>::iterator second_hit = first_hit+1; second_hit != hitted_layers.end(); second_hit++){
-		
-		for ( int k = 0; k < PiXTRK_layers[*first_hit]; k++){
-			for( int i = 0; i < PiXTRK_layers[*second_hit]; i++){
-			double dPhi = 0;
-			double dEta = 0;
+	  if( n_pixels >= 3 ){
+		  for( std::vector<int>::iterator first_hit = hitted_layers.begin(); first_hit != hitted_layers.end(); first_hit++){
+			  for( std::vector<int>::iterator second_hit = first_hit+1; second_hit != hitted_layers.end(); second_hit++){
 
-			TVector3 first_layer_;
-			TVector3 second_layer_;
+				  for ( int k = 0; k < PiXTRK_layers[*first_hit]; k++){
+					  for( int i = 0; i < PiXTRK_layers[*second_hit]; i++){
+						  double dPhi = 0;
+						  double dEta = 0;
 
-			if( *first_hit == 1 ) first_layer_ = PiXTRK_first_hits[k];
-			if( *first_hit == 2 ) first_layer_ = PiXTRK_second_hits[k];
-			if( *first_hit == 3 ) first_layer_ = PiXTRK_third_hits[k];
+						  TVector3 first_layer_;
+						  TVector3 second_layer_;
 
-			if( *second_hit == 2 ) second_layer_ = PiXTRK_second_hits[i];
-			if( *second_hit == 3 ) second_layer_ = PiXTRK_third_hits[i];
-			if( *second_hit == 4 ) second_layer_ = PiXTRK_fourth_hits[i];
+						  if( *first_hit == 1 ) first_layer_ = PiXTRK_first_hits[k];
+						  if( *first_hit == 2 ) first_layer_ = PiXTRK_second_hits[k];
+						  if( *first_hit == 3 ) first_layer_ = PiXTRK_third_hits[k];
 
-			TVector3 pixelVector = second_layer_ - first_layer_;
-			TVector3 EM_pixelVector = emvector - second_layer_;
+						  if( *second_hit == 2 ) second_layer_ = PiXTRK_second_hits[i];
+						  if( *second_hit == 3 ) second_layer_ = PiXTRK_third_hits[i];
+						  if( *second_hit == 4 ) second_layer_ = PiXTRK_fourth_hits[i];
 
-			dPhi = deltaPhi(EM_pixelVector.Phi(), pixelVector.Phi());
-			dEta = EM_pixelVector.Eta() - pixelVector.Eta();
+						  TVector3 pixelVector = second_layer_ - first_layer_;
+						  TVector3 EM_pixelVector = emvector - second_layer_;
 
-//			cout<<"closest_me0Eta = "<<closest_me0Eta<<endl;
+						  dPhi = deltaPhi(EM_pixelVector.Phi(), pixelVector.Phi());
+						  dEta = EM_pixelVector.Eta() - pixelVector.Eta();
 
-			if( *first_hit == 1 && *second_hit == 2 ){
-				if( fabs(closest_me0Eta) > 2.0 && fabs(closest_me0Eta) < 2.4  ){ dPhi_l1me0_pixV[0][0].push_back(dPhi); dEta_l1me0_pixV[0][0].push_back(dEta);}
-				if( fabs(closest_me0Eta) > 2.4 && fabs(closest_me0Eta) < 2.8  ){ dPhi_l1me0_pixV[0][1].push_back(dPhi); dEta_l1me0_pixV[0][1].push_back(dEta);}
-			}
-			if( *first_hit == 1 && *second_hit == 3 ){
-				if( fabs(closest_me0Eta) > 2.0 && fabs(closest_me0Eta) < 2.4  ){ dPhi_l1me0_pixV[1][0].push_back(dPhi); dEta_l1me0_pixV[1][0].push_back(dEta);}
-				if( fabs(closest_me0Eta) > 2.4 && fabs(closest_me0Eta) < 2.8  ){ dPhi_l1me0_pixV[1][1].push_back(dPhi); dEta_l1me0_pixV[1][1].push_back(dEta);}
-			}
-			if( *first_hit == 1 && *second_hit == 4 ){
-				if( fabs(closest_me0Eta) > 2.0 && fabs(closest_me0Eta) < 2.4  ){ dPhi_l1me0_pixV[2][0].push_back(dPhi); dEta_l1me0_pixV[2][0].push_back(dEta);}
-				if( fabs(closest_me0Eta) > 2.4 && fabs(closest_me0Eta) < 2.8  ){ dPhi_l1me0_pixV[2][1].push_back(dPhi); dEta_l1me0_pixV[2][1].push_back(dEta);}
-			}
-			if( *first_hit == 2 && *second_hit == 3 ){
-				if( fabs(closest_me0Eta) > 2.0 && fabs(closest_me0Eta) < 2.4  ){ dPhi_l1me0_pixV[3][0].push_back(dPhi); dEta_l1me0_pixV[3][0].push_back(dEta);}
-				if( fabs(closest_me0Eta) > 2.4 && fabs(closest_me0Eta) < 2.8  ){ dPhi_l1me0_pixV[3][1].push_back(dPhi); dEta_l1me0_pixV[3][1].push_back(dEta);}
-			}
-			if( *first_hit == 2 && *second_hit == 4 ){
-				if( fabs(closest_me0Eta) > 2.0 && fabs(closest_me0Eta) < 2.4  ){ dPhi_l1me0_pixV[4][0].push_back(dPhi); dEta_l1me0_pixV[4][0].push_back(dEta);}
-				if( fabs(closest_me0Eta) > 2.4 && fabs(closest_me0Eta) < 2.8  ){ dPhi_l1me0_pixV[4][1].push_back(dPhi); dEta_l1me0_pixV[4][1].push_back(dEta);}
-			}
-			if( *first_hit == 3 && *second_hit == 4 ){
-				if( fabs(closest_me0Eta) > 2.0 && fabs(closest_me0Eta) < 2.4  ){ dPhi_l1me0_pixV[5][0].push_back(dPhi); dEta_l1me0_pixV[5][0].push_back(dEta);}
-				if( fabs(closest_me0Eta) > 2.4 && fabs(closest_me0Eta) < 2.8  ){ dPhi_l1me0_pixV[5][1].push_back(dPhi); dEta_l1me0_pixV[5][1].push_back(dEta);}
-			}
-		}
-	}
-      }
-	}
-      }
+						  //			cout<<"closest_me0Eta = "<<closest_me0Eta<<endl;
+
+						  if( *first_hit == 1 && *second_hit == 2 ){
+							  if( fabs(closest_me0Eta) > 2.0 && fabs(closest_me0Eta) < 2.4  ){ dPhi_l1me0_pixV[0][0].push_back(dPhi); dEta_l1me0_pixV[0][0].push_back(dEta);}
+							  if( fabs(closest_me0Eta) > 2.4 && fabs(closest_me0Eta) < 2.8  ){ dPhi_l1me0_pixV[0][1].push_back(dPhi); dEta_l1me0_pixV[0][1].push_back(dEta);}
+						  }
+						  if( *first_hit == 1 && *second_hit == 3 ){
+							  if( fabs(closest_me0Eta) > 2.0 && fabs(closest_me0Eta) < 2.4  ){ dPhi_l1me0_pixV[1][0].push_back(dPhi); dEta_l1me0_pixV[1][0].push_back(dEta);}
+							  if( fabs(closest_me0Eta) > 2.4 && fabs(closest_me0Eta) < 2.8  ){ dPhi_l1me0_pixV[1][1].push_back(dPhi); dEta_l1me0_pixV[1][1].push_back(dEta);}
+						  }
+						  if( *first_hit == 1 && *second_hit == 4 ){
+							  if( fabs(closest_me0Eta) > 2.0 && fabs(closest_me0Eta) < 2.4  ){ dPhi_l1me0_pixV[2][0].push_back(dPhi); dEta_l1me0_pixV[2][0].push_back(dEta);}
+							  if( fabs(closest_me0Eta) > 2.4 && fabs(closest_me0Eta) < 2.8  ){ dPhi_l1me0_pixV[2][1].push_back(dPhi); dEta_l1me0_pixV[2][1].push_back(dEta);}
+						  }
+						  if( *first_hit == 2 && *second_hit == 3 ){
+							  if( fabs(closest_me0Eta) > 2.0 && fabs(closest_me0Eta) < 2.4  ){ dPhi_l1me0_pixV[3][0].push_back(dPhi); dEta_l1me0_pixV[3][0].push_back(dEta);}
+							  if( fabs(closest_me0Eta) > 2.4 && fabs(closest_me0Eta) < 2.8  ){ dPhi_l1me0_pixV[3][1].push_back(dPhi); dEta_l1me0_pixV[3][1].push_back(dEta);}
+						  }
+						  if( *first_hit == 2 && *second_hit == 4 ){
+							  if( fabs(closest_me0Eta) > 2.0 && fabs(closest_me0Eta) < 2.4  ){ dPhi_l1me0_pixV[4][0].push_back(dPhi); dEta_l1me0_pixV[4][0].push_back(dEta);}
+							  if( fabs(closest_me0Eta) > 2.4 && fabs(closest_me0Eta) < 2.8  ){ dPhi_l1me0_pixV[4][1].push_back(dPhi); dEta_l1me0_pixV[4][1].push_back(dEta);}
+						  }
+						  if( *first_hit == 3 && *second_hit == 4 ){
+							  if( fabs(closest_me0Eta) > 2.0 && fabs(closest_me0Eta) < 2.4  ){ dPhi_l1me0_pixV[5][0].push_back(dPhi); dEta_l1me0_pixV[5][0].push_back(dEta);}
+							  if( fabs(closest_me0Eta) > 2.4 && fabs(closest_me0Eta) < 2.8  ){ dPhi_l1me0_pixV[5][1].push_back(dPhi); dEta_l1me0_pixV[5][1].push_back(dEta);}
+						  }
+					  }
+				  }
+			  }
+		  }
+	  }
 
    }// event loop
 
@@ -302,12 +279,14 @@ void MakeSWMuon::Loop()
 			   x[nth_me0_sw][i].push_back(low_et);
 			   median[nth_me0_sw][i].push_back(getMedian(dPhi_l1me0_pixV[nth_me0_sw][i]));
 			   x_err[nth_me0_sw][i].push_back(0.);
-			   median_err[nth_me0_sw][i].push_back(getMedianErr(dPhi_l1me0_pixV[nth_me0_sw][i]));
+//			   median_err[nth_me0_sw][i].push_back(getMedianErr(dPhi_l1me0_pixV[nth_me0_sw][i]));
+			   median_err[nth_me0_sw][i].push_back(0.);
 
 			   deta_x[nth_me0_sw][i].push_back(low_et);
 			   deta_median[nth_me0_sw][i].push_back(getMedian(dEta_l1me0_pixV[nth_me0_sw][i]));
 			   deta_x_err[nth_me0_sw][i].push_back(0.);
-			   deta_median_err[nth_me0_sw][i].push_back(getMedianErr(dEta_l1me0_pixV[nth_me0_sw][i]));
+//			   deta_median_err[nth_me0_sw][i].push_back(getMedianErr(dEta_l1me0_pixV[nth_me0_sw][i]));
+			   deta_median_err[nth_me0_sw][i].push_back(0.);
 		   }
 
 
@@ -352,7 +331,7 @@ void MakeSWMuon::Loop()
 		   deta_median_gr[j][i] = new TGraphErrors(deta_point_size, &deta_x[j][i][0], &deta_median[j][i][0], &deta_x_err[j][i][0], &deta_median_err[j][i][0]);
 
 		   dphi_median_gr[j][i]->SetMarkerStyle(24);
-		   deta_median_gr[j][i]->SetMarkerSize(0.3);
+		   dphi_median_gr[j][i]->SetMarkerSize(0.5);
 		   TString nth_me0_sw_;
 		   nth_me0_sw_.Form("%d", j + 1);
 		   TString eta_region;
@@ -362,10 +341,27 @@ void MakeSWMuon::Loop()
 		   dphi_median_gr[j][i]->SetName( "ME0_Pix_dphi_SW_"+nth_me0_sw_+"_eta_region_"+eta_region+"_median"); 
 
 		   deta_median_gr[j][i]->SetMarkerStyle(24);
-		   deta_median_gr[j][i]->SetMarkerSize(0.3);
+		   deta_median_gr[j][i]->SetMarkerSize(0.5);
 		   deta_median_gr[j][i]->SetTitle(nth_me0_sw_+"th_Pixel_"+eta_region+"_median");
 		   deta_median_gr[j][i]->SetName( "ME0_Pix_deta_SW_"+nth_me0_sw_+"_eta_region_"+eta_region+"_median");
+/*
+		   if( j == 0 ){
+			   TCanvas *c1 = new TCanvas();
+			   dphi_median_gr[j][i]->SetMarkerColor(kOrange);
+			   dphi_median_gr[j][i]->SetFillStyle(3002);
+			   dphi_median_gr[j][i]->SetFillColorAlpha(kBlue,0.2);
+			   dphi_median_gr[j][i]->Draw("apE3");
+			   c1->SaveAs("ME0_Pix_dPhi_"+nth_me0_sw_+"eta_region_"+eta_region+".png");
 
+			   TCanvas *c2 = new TCanvas();
+			   deta_median_gr[j][i]->SetMarkerColor(kOrange);
+			   deta_median_gr[j][i]->SetFillStyle(3002);
+			   deta_median_gr[j][i]->SetFillColorAlpha(kBlue,0.2);
+			   deta_median_gr[j][i]->Draw("apE3");
+			   c2->SaveAs("ME0_Pix_dEta_"+nth_me0_sw_+"eta_region_"+eta_region+".png");
+
+		   }
+*/
 		   dphi_median_gr[j][i]->Write();
 		   deta_median_gr[j][i]->Write();
 	   }
