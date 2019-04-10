@@ -1,12 +1,12 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Thu Aug 16 18:16:46 2018 by ROOT version 6.10/09
+// Thu Jan  3 21:43:06 2019 by ROOT version 6.10/09
 // from TTree L1PiXTRKTree/L1PiXTRKTree
 // found on file: /xrootd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/0000/SingleMuonNoPU_1.root
 //////////////////////////////////////////////////////////
 
-#ifndef MakeSWMuon_h
-#define MakeSWMuon_h
+#ifndef plot_h
+#define plot_h
 
 #include <TROOT.h>
 #include <TChain.h>
@@ -19,7 +19,7 @@
 #include "vector"
 #include "vector"
 
-class MakeSWMuon {
+class plot {
 public :
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
    Int_t           fCurrent; //!current Tree number in a TChain
@@ -378,23 +378,8 @@ public :
    TBranch        *b_me0SegNumRecHit;   //!
    TBranch        *b_me0SegDeltaPhi;   //!
 
-   inline float deltaPhi(float phi1, float phi2){
-	   float result = phi1 - phi2;
-	   while (result > M_PI) result -= 2*M_PI;
-	   while (result <= -M_PI) result += 2*M_PI;
-	   return result;
-   }
-
-   double getMedian( const std::vector<float> &vec);
-   double getMedianErr( const std::vector<float> &vec);
-   double ROI_func(int region, double eget);
-
-   double StandaloneDPhi_BS(TVector3& first_hit, TVector3& second_hit);
-   double StandaloneDPhi(TVector3& first_hit, TVector3& second_hit, TVector3& third_hit);
-   double StandaloneDEta(TVector3& first_hit, TVector3& second_hit, TVector3& third_hit);
-
-   MakeSWMuon(TTree *tree=0);
-   virtual ~MakeSWMuon();
+   plot(TTree *tree=0);
+   virtual ~plot();
    virtual Int_t    Cut(Long64_t entry);
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
@@ -402,12 +387,19 @@ public :
    virtual void     Loop();
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
+
+   inline float deltaPhi(float phi1, float phi2){
+	   float result = phi1 - phi2;
+	   while(result > float(M_PI)) result -= float(2*M_PI);
+	   while(result <= -float(M_PI)) result += float(2*M_PI);
+	   return result;
+   }
 };
 
 #endif
 
-#ifdef MakeSWMuon_cxx
-MakeSWMuon::MakeSWMuon(TTree *tree) : fChain(0) 
+#ifdef plot_cxx
+plot::plot(TTree *tree) : fChain(0) 
 {
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
@@ -421,26 +413,40 @@ MakeSWMuon::MakeSWMuon(TTree *tree) : fChain(0)
       dir->GetObject("L1PiXTRKTree",tree);
 
    }
-   */
+*/
+//     if (tree == 0) {
+//#ifdef SINGLE_TREE
+//	     TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/xrootd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/*/");
+//	     if(!f || !f->IsOpen()){
+//		     f = new TFile("/xrootd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/*/");
+//	     }
+//	     f->GetObject("l1PiXTRKTree/L1PiXTRKTree","");
+//#else
+//	     TChain *chain = new TChain("l1PiXTRKTree/L1PiXTRKTree","");
+
+//	     chain->Add("/xrootd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/*/*.root/L1PiXTRKTree");
+//	     chain->Add("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/0000/*.root/l1PiXTRKTree/L1PiXTRKTree");
+//	     chain->Add("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/0001/*.root/l1PiXTRKTree/L1PiXTRKTree");
+//	     chain->Add("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/0002/*.root/l1PiXTRKTree/L1PiXTRKTree");
+//	     chain->Add("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/0003/*.root/l1PiXTRKTree/L1PiXTRKTree");
+//	     chain->Add("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/0004/*.root/l1PiXTRKTree/L1PiXTRKTree");
+//	     
+//	     tree = chain;
+//#endif
+//     }	
+//   Init(tree);
+   
      if (tree == 0) {
 #ifdef SINGLE_TREE
-	     TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/xrootd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/*/");
-	   //  TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/xrootd/store/user/jhong/SingleMu_FlatPt-2to100/crab_SingleMuNoPU/190227_114927/0000/");
+	     TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/xrootd/store/user/jhong/SingleMu_FlatPt-2to100/crab_SingleMu200PU/190122_053556/0000/");
 	     if(!f || !f->IsOpen()){
-		     f = new TFile("/xrootd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/*/");
-		 //    f = new TFile("/xrootd/store/user/jhong/SingleMu_FlatPt-2to100/crab_SingleMuNoPU/190227_114927/0000/");
+			 f = new TFile("/xrootd/store/user/jhong/SingleMu_FlatPt-2to100/crab_SingleMu200PU/190122_053556/0000/");
 	     }
 	     f->GetObject("l1PiXTRKTree/L1PiXTRKTree","");
 #else
 	     TChain *chain = new TChain("l1PiXTRKTree/L1PiXTRKTree","");
 
-//	     chain->Add("/xrootd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/*/*.root/L1PiXTRKTree");
-	   //  chain->Add("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/jhong/SingleMu_FlatPt-2to100/crab_SingleMuNoPU/190227_114927/0000/*.root/l1PiXTRKTree/L1PiXTRKTree");
-	     chain->Add("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/0000/*.root/l1PiXTRKTree/L1PiXTRKTree");
-	     chain->Add("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/0001/*.root/l1PiXTRKTree/L1PiXTRKTree");
-	     chain->Add("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/0002/*.root/l1PiXTRKTree/L1PiXTRKTree");
-	     chain->Add("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/0003/*.root/l1PiXTRKTree/L1PiXTRKTree");
-	     chain->Add("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/0004/*.root/l1PiXTRKTree/L1PiXTRKTree");
+	     chain->Add("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/jhong/SingleMu_FlatPt-2to100/crab_SingleMu200PU/190122_053556/0000/*.root/l1PiXTRKTree/L1PiXTRKTree");
 	     
 	     tree = chain;
 #endif
@@ -448,19 +454,19 @@ MakeSWMuon::MakeSWMuon(TTree *tree) : fChain(0)
    Init(tree);
 }
 
-MakeSWMuon::~MakeSWMuon()
+plot::~plot()
 {
    if (!fChain) return;
    delete fChain->GetCurrentFile();
 }
 
-Int_t MakeSWMuon::GetEntry(Long64_t entry)
+Int_t plot::GetEntry(Long64_t entry)
 {
 // Read contents of entry.
    if (!fChain) return 0;
    return fChain->GetEntry(entry);
 }
-Long64_t MakeSWMuon::LoadTree(Long64_t entry)
+Long64_t plot::LoadTree(Long64_t entry)
 {
 // Set the environment to read one entry
    if (!fChain) return -5;
@@ -473,7 +479,7 @@ Long64_t MakeSWMuon::LoadTree(Long64_t entry)
    return centry;
 }
 
-void MakeSWMuon::Init(TTree *tree)
+void plot::Init(TTree *tree)
 {
    // The Init() function is called when the selector needs to initialize
    // a new tree or chain. Typically here the branch addresses and branch
@@ -825,7 +831,7 @@ void MakeSWMuon::Init(TTree *tree)
    Notify();
 }
 
-Bool_t MakeSWMuon::Notify()
+Bool_t plot::Notify()
 {
    // The Notify() function is called when a new file is opened. This
    // can be either for a new TTree in a TChain or when when a new TTree
@@ -836,115 +842,18 @@ Bool_t MakeSWMuon::Notify()
    return kTRUE;
 }
 
-void MakeSWMuon::Show(Long64_t entry)
+void plot::Show(Long64_t entry)
 {
 // Print contents of entry.
 // If entry is not specified, print current entry
    if (!fChain) return;
    fChain->Show(entry);
 }
-Int_t MakeSWMuon::Cut(Long64_t entry)
+Int_t plot::Cut(Long64_t entry)
 {
 // This function may be called from Loop.
 // returns  1 if entry is accepted.
 // returns -1 otherwise.
    return 1;
 }
-
-double MakeSWMuon::getMedian(const std::vector<float> &vec)
-{
-  // /SHarper/SHNtupliser/src/MathFuncs.cc
-
-  double median=0.;
-
-  //odd number, definate median
-  if(vec.size() % 2 !=0) {
-    int middleNr = (vec.size())/2; // index number
-    median = vec[middleNr];
-  }else{ //even number, take median as halfway between the two middle values
-    int middleNr = (vec.size())/2;
-    median= vec[middleNr];
-    median+= vec[middleNr-1];
-    median/=2.;
-  }
-  return median;
-
-}
-
-double MakeSWMuon::getMedianErr(const std::vector<float> &vec)
-{
-  double err = 0.;
-
-  int middleNr_down = (int)((vec.size()) * 0.1635);
-  int middleNr_up = (int)((vec.size()) * 0.8365);
-
-  err = (vec[middleNr_up] - vec[middleNr_down])/2.;
-
-  return err;
-
-}
-
-double MakeSWMuon::ROI_func(int region, double eget){
-	double p[5];
-
-///////////// For official sample ////////////////////
-/*
-	if(region == 1){
-		// fir for median
-		p[0] = -0.000554943; 
-		p[1] = 0.000366192;
-		p[2] = -17.6208;
-		p[3] = 0.413295;
-		p[4] = 47.4001;
-	}
-	if(region == 2){
-		// fir for median
-		p[0] = -0.000607892; 
-		p[1] = 0.00421784;
-		p[2] = -0.929571;
-		p[3] = 0.452041;
-		p[4] = 6.55422;
-	}
-*/	
-///////////// original .////////////////////
-
-	if(region == 1){
-		// fir for median
-		p[0] = 0.000166057;
-		p[1] = -0.396034;
-		p[2] = -1.01227;
-		p[3] = -0.0444885;
-		p[4] = 1.34528;
-	}
-	if(region == 2){
-		// fir for median
-		p[0] = 0.000103963;
-		p[1] = -0.042149;
-		p[2] = -1.04393;
-		p[3] = -0.097035;
-		p[4] = 3.13631;
-	}
-
-/////////////////////////////////////////////	
-	return p[0]*pow(eget,0) + p[1]*pow(eget,p[2])*exp(-pow(eget,p[3])+p[4]);
-
-}
-
-double MakeSWMuon::StandaloneDPhi_BS(TVector3& first_hit, TVector3& second_hit){
-
-	return deltaPhi((second_hit - first_hit).Phi(), first_hit.Phi());
-}
-
-double MakeSWMuon::StandaloneDPhi(TVector3& first_hit, TVector3& second_hit, TVector3& third_hit){
-
-	return deltaPhi((third_hit - second_hit).Phi(), (second_hit - first_hit).Phi());
-}
-
-double MakeSWMuon::StandaloneDEta(TVector3& first_hit, TVector3& second_hit, TVector3& third_hit){
-
-	return (third_hit - second_hit).Eta() - (second_hit - first_hit).Eta();
-}
-
-
-
-#endif // #ifdef MakeSWMuon_cxx
+#endif // #ifdef plot_cxx

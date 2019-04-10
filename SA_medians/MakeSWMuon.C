@@ -12,7 +12,7 @@
 void MakeSWMuon::Loop()
 {
 
-	TFile *file = new TFile("Pix_Pix1023.root","recreate");
+	TFile *file = new TFile("Pix_Pix_median.root","recreate");
 
     if (fChain == 0) return;
 
@@ -159,8 +159,8 @@ void MakeSWMuon::Loop()
       if( fabs(closest_me0Eta) < 2.0 || fabs(closest_me0Eta) > 2.8 ) continue;
 
       //set roi dphi cut
-      float upper_roi = ROI_func(eta_region, closest_me0Eta) + 0.055;
-      float lower_roi = ROI_func(eta_region, closest_me0Eta) - 0.055;
+      float upper_roi = ROI_func(eta_region, closest_me0Eta) + 0.005;
+      float lower_roi = ROI_func(eta_region, closest_me0Eta) - 0.005;
 
       int fpix_size = fRecHitGx->size();
 
@@ -346,7 +346,7 @@ void MakeSWMuon::Loop()
 	//		   median_err[nth_me0_sw][i].push_back(getMedianErr(dPhi_pixV_pixV[nth_me0_sw][i]));
 			   median_err[nth_me0_sw][i].push_back(0.);
 		   }
-
+//// For drawing each pt range ////
 /*******************************************8
 		   cout<<"count = "<<count<<endl;
 

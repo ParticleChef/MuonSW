@@ -628,20 +628,20 @@ MuonEff::MuonEff(TTree *tree) : fChain(0)
 
      if (tree == 0) {
 #ifdef SINGLE_TREE
-	    // TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/xrootd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/*/");
-	     TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/xrootd/store/user/jhong/SingleMu_FlatPt-2to100/crab_SingleMu200PU/190122_053556/0000/");
+	     TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/xrootd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/*/");
+	  //   TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/xrootd/store/user/jhong/SingleMu_FlatPt-2to100/crab_SingleMu200PU/190122_053556/0000/");
 	     if(!f || !f->IsOpen()){
-		    // f = new TFile("/xrootd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/*/");
-		     f = new TFile("xrootd/store/user/jhong/SingleMu_FlatPt-2to100/crab_SingleMu200PU/190122_053556/0000/");
+		     f = new TFile("/xrootd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/*/");
+		   //  f = new TFile("xrootd/store/user/jhong/SingleMu_FlatPt-2to100/crab_SingleMu200PU/190122_053556/0000/");
 	     }
 	     f->GetObject("l1PiXTRKTree/L1PiXTRKTree","");
 #else
 	    // TChain *chain = new TChain("l1PiXTRKTree/L1PiXTRKTree","");
 	     TChain *chain = new TChain("l1PiXTRKTree/L1PiXTRKTree","");
 
-	     chain->Add("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/jhong/SingleMu_FlatPt-2to100/crab_SingleMu200PU/190122_053556/0000/*.root/l1PiXTRKTree/L1PiXTRKTree");
+//	     chain->Add("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/jhong/SingleMu_FlatPt-2to100/crab_SingleMu200PU/190122_053556/0000/*.root/l1PiXTRKTree/L1PiXTRKTree");
 //	     chain->Add("/xrootd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/*/*.root/L1PiXTRKTree");
-	   //  chain->Add("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/0000/*.root/l1PiXTRKTree/L1PiXTRKTree");
+	     chain->Add("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/0000/*.root/l1PiXTRKTree/L1PiXTRKTree");
 	    // chain->Add("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/0001/*.root/l1PiXTRKTree/L1PiXTRKTree");
 	    // chain->Add("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/0002/*.root/l1PiXTRKTree/L1PiXTRKTree");
 	    // chain->Add("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/0003/*.root/l1PiXTRKTree/L1PiXTRKTree");
@@ -656,7 +656,7 @@ MuonEff::MuonEff(TTree *tree) : fChain(0)
    skip = 1;
 
 //   outfile = new TFile("../output_tmp/Tree_output","recreate");
-   outfile = new TFile("Eff_200PU.root","recreate");
+   outfile = new TFile("Eff_noPU.root","recreate");
    pixtrk_tree = new TTree("t","t");
 
    count_Entry = 1;
