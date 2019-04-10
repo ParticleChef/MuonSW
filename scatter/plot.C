@@ -59,9 +59,9 @@ void plot::Loop()
 	  me0SegPos.SetXYZ(me0SegPosX->at(closest_me0),me0SegPosY->at(closest_me0),me0SegPosZ->at(closest_me0));
 	  float eta = me0SegPos.Eta();
 	  float phi = me0SegPos.Phi();
-	  if( eta > 2.0 && eta <= 2.4 ) region = 1;
-	  if( eta > 2.4 && eta < 2.8 )  region = 2;
-	  if( eta < 2.0 && eta > 2.8 ) continue;
+	  if( fabs(eta) > 2.0 && fabs(eta) <= 2.4 ) region = 1;
+	  if( fabs(eta) > 2.4 && fabs(eta) < 2.8 )  region = 2;
+	  if( fabs(eta) < 2.0 && fabs(eta) > 2.8 ) continue;
 
 	  if( region == 0 ) continue;
 
