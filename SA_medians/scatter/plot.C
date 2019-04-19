@@ -89,6 +89,9 @@ void plot::Loop()
 				  float eta1 = (D3.at(j) - D2.at(i)).Eta();
 				  float phi2 = (D2.at(k) - D1.at(j)).Phi();
 				  float eta2 = (D2.at(k) - D1.at(j)).Eta();
+				  float dphi = phi2 - phi1;
+				  if( dphi > M_PI ) dphi = dphi - 2*M_PI;
+				  if( dphi <= -M_PI ) dphi = dphi + 2*M_PI;
 				  if(region == 1 && genPartPt->at(0) > 10 )dphi_dist->Fill(genPartPt->at(0),phi2 - phi1);
 				  if(region == 1 && genPartPt->at(0) > 10 )deta_dist->Fill(genPartPt->at(0),eta2 - eta1);
 			  }
@@ -102,6 +105,9 @@ void plot::Loop()
 				  float eta1 = (D1.at(j) - BS.at(0)).Eta();
 				  float phi2 = (D3.at(k) - D1.at(j)).Phi();
 				  float eta2 = (D3.at(k) - D1.at(j)).Eta();
+				  float dphi = phi2 - phi1;
+				  if( dphi > M_PI ) dphi = dphi - 2*M_PI;
+				  if( dphi <= -M_PI ) dphi = dphi + 2*M_PI;
 				  if(region == 1 )dphi_dist->Fill(genPartPt->at(0),phi2 - phi1);
 				  if(region == 1 )deta_dist->Fill(genPartPt->at(0),eta2 - eta1);
 			  }
