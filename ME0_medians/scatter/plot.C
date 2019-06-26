@@ -21,8 +21,8 @@ void plot::Loop()
    TH2F *dphi_me0_D12_1 = new TH2F("","",100,0,200,1000,-0.3,0.3);
    TH2F *deta_me0_D12_1 = new TH2F("","",100,0,200,1000,-0.3,0.3);
 
-   TH2F *dphi_dist = new TH2F("","",1000,0,200,1000,-0.2,0.2);
-   TH2F *deta_dist = new TH2F("","",1000,0,200,1000,-0.2,0.2);
+   TH2F *dphi_dist = new TH2F("","",1000,0,100,1000,-0.2,0.2);
+   TH2F *deta_dist = new TH2F("","",1000,0,100,1000,-0.2,0.2);
 
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
 //   for (Long64_t jentry=0; jentry<10;jentry++) {
@@ -33,6 +33,9 @@ void plot::Loop()
 
 	  if( me0SegNum == 0 || fRecHitN == 0 ) continue;
 
+//	  cout<<" 0 ="<<genPartCharge->at(0)<<endl;
+//	  cout<<" 1 ="<<genPartCharge->at(1)<<endl;
+
 	  float closest_dr = 9999;
 	  int closest_me0 = -1;
 	  int Nme0 = me0SegPosX->size();
@@ -42,9 +45,9 @@ void plot::Loop()
 		  me0SegPos.SetXYZ(me0SegPosX->at(i),me0SegPosY->at(i),me0SegPosZ->at(i));
 		  float phi = me0SegPos.Phi();
 		  float eta = me0SegPos.Eta();
-		  float dphi = deltaPhi(genPartPhi->at(0),phi);
+		  float dphi = deltaPhi(genPartPhi->at(1),phi);
 
-		  float current_dr = sqrt(pow(dphi,2)+pow(genPartEta->at(0)-eta,2));
+		  float current_dr = sqrt(pow(dphi,2)+pow(genPartEta->at(1)-eta,2));
 		  //if( genPartPt->at(0) < 20 ) continue;
 		  if( current_dr < closest_dr ){
 			  closest_dr = current_dr;
@@ -61,7 +64,7 @@ void plot::Loop()
 	  float phi = me0SegPos.Phi();
 	  if(fabs(eta) > 2.0 && fabs(eta) <= 2.4 ) region = 1;
 	  if(fabs(eta) > 2.4 && fabs(eta) < 2.8 )  region = 2;
-	  if(fabs(eta) < 2.0 && fabs(eta) > 2.8 ) continue;
+	  if(fabs(eta) < 2.0 || fabs(eta) > 2.8 ) continue;
 
 	  if( region == 0 ) continue;
 
@@ -79,26 +82,32 @@ void plot::Loop()
 		  if( fRecHitDisk->at(i)== 5 ) D5.push_back( TVector3(fRecHitGx->at(i),fRecHitGy->at(i),fRecHitGz->at(i)) );
 		  
 	  }
-	  for(int i = 0; i < D1.size(); i++){
-		  for(int j = 0; j < D2.size(); j++){
-			  float phi12 = (D2.at(j) - D1.at(i)).Phi();
-			  float eta12 = (D2.at(j) - D1.at(i)).Eta();
-			  float dphi = phi12 - phi;
+	  for(int i = 0; i < D4.size(); i++){
+		  for(int j = 0; j < D5.size(); j++){
+			  float phi12 = (D5.at(j) - D4.at(i)).Phi();
+			  float eta12 = (D5.at(j) - D4.at(i)).Eta();
+			  float dphi = phi - phi12;
 			  if( dphi > M_PI ) dphi = dphi - 2*M_PI;
 			  if( dphi <= -M_PI ) dphi = dphi + 2*M_PI;
-			  if(region == 1 && genPartPt->at(0) > 10 )dphi_dist->Fill(genPartPt->at(0),dphi);
-			  if(region == 1 && genPartPt->at(0) > 10 )deta_dist->Fill(genPartPt->at(0),eta - eta12);
+			  if(region == 2 && genPartPt->at(1) > 10 )dphi_dist->Fill(genPartPt->at(1),dphi);
+			  if(region == 2 && genPartPt->at(1) > 10 )deta_dist->Fill(genPartPt->at(1),eta - eta12);
 		  }
 	  } 
    }// end of event
 
-   TF1 *median_fitFunc = new TF1("funcUp","( [0]*pow(x,0) + [1]*pow(x,[2])*exp(-pow(x,[3])+[4]) )", 10., 200.);
-/////// Setting the parameter limits //////////
+   TF1 *median_fitFunc = new TF1("funcUp","( [0]*pow(x,0) + [1]*pow(x,[2])*exp(-pow(x,[3])+[4]) )", 10., 100.);
+
 //   median_fitFunc->SetParLimits(0,-0.0013,0);
-//   median_fitFunc->SetParLimits(1,0.3,0.32);
-//   median_fitFunc->SetParLimits(2,-1,0.0);
-//   median_fitFunc->SetParLimits(3,-0.02,-0.01);
-//   median_fitFunc->SetParLimits(4,1.0,1.05);
+//   median_fitFunc->SetParLimits(1,0.4,0.41);
+//   median_fitFunc->SetParLimits(2,-1,-0.99);
+//   median_fitFunc->SetParLimits(3,0.049,0.051);
+//   median_fitFunc->SetParLimits(4,1.29,1.31);
+
+    median_fitFunc->SetParLimits(0,0.,0.002);
+    median_fitFunc->SetParLimits(1,0.,0.41);
+    median_fitFunc->SetParLimits(2,-0.01,0.01);
+    median_fitFunc->SetParLimits(3,-0.01,0.01);
+    median_fitFunc->SetParLimits(4,-0.01,0.01);
 
 //   median_fitFunc->SetParLimits(0,0.0025,0.0026);
 //   median_fitFunc->SetParLimits(1,0,0.5);
@@ -106,10 +115,10 @@ void plot::Loop()
 //   median_fitFunc->SetParLimits(3,0.2,0.4);
 //   median_fitFunc->SetParLimits(4,0.4,0.6);
 
-   TFile *file = new TFile("../ME0_median.root","read");
+   TFile *file = new TFile("../ME0_Pix_offi_5.root","read");
    
-   int nth_SW = 1;
-   int Region = 1;
+   int nth_SW = 6;
+   int Region = 2;
    int eta_or_phi = 1; //eta = 1, phi = 2
 
 	TString nth_SW_;
@@ -128,7 +137,7 @@ void plot::Loop()
    median_->GetXaxis()->SetTitle("p_{T(gen)} [GeV]");
    if(eta_or_phi == 1) median_->GetYaxis()->SetTitle("#Delta#eta");
    if(eta_or_phi == 2) median_->GetYaxis()->SetTitle("#Delta#phi");
-   median_->Draw("apX");
+  // median_->Draw("apX");
 
 
    median_fitFunc->SetLineColor(kRed);
@@ -161,9 +170,9 @@ void plot::Loop()
    }
   // if(eta_or_phi == 1) y1[0] = 0.;
   // if(eta_or_phi == 2) y1[0] = 0.02;
-   for(int i = 0; i < 20; i++){
-	   cout<<"y1["<<i<<"] = "<<y1[i]<<endl;
-   }
+//   for(int i = 0; i < 20; i++){
+//	   cout<<"y1["<<i<<"] = "<<y1[i]<<endl;
+//   }
    c1->SetGrid();
    TGraphErrors *gr2 = new TGraphErrors(binSize,x1,y1,x2,y2);
    gr2->GetXaxis()->SetRangeUser(10,100);
@@ -180,8 +189,8 @@ void plot::Loop()
    median_fitFunc->Draw("lsame");
 
 
-   if(eta_or_phi == 1) c1->SaveAs("plots/deta_me0_pix_sw_"+nth_SW_+"_region_"+Region_+".png");
-   if(eta_or_phi == 2) c1->SaveAs("plots/dphi_me0_pix_sw_"+nth_SW_+"_region_"+Region_+".png");
+   if(eta_or_phi == 1) c1->SaveAs("plots_offi/deta_me0_pix_sw_"+nth_SW_+"_region_"+Region_+".png");
+   if(eta_or_phi == 2) c1->SaveAs("plots_offi/dphi_me0_pix_sw_"+nth_SW_+"_region_"+Region_+".png");
 
 //   c1->Close();
 
