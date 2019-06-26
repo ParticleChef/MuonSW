@@ -446,7 +446,8 @@ plot::plot(TTree *tree) : fChain(0)
 #else
 	     TChain *chain = new TChain("l1PiXTRKTree/L1PiXTRKTree","");
 
-	     chain->Add("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/jhong/SingleMu_FlatPt-2to100/crab_SingleMu200PU/190122_053556/0000/*.root/l1PiXTRKTree/L1PiXTRKTree");
+	     chain->Add("root://cms-xrdr.private.lo:2094//xrd/store/user/jhong/SingleMu_FlatPt-2to100/crab_SingleMu200PU/190122_053556/0000/*.root/l1PiXTRKTree/L1PiXTRKTree");
+//	     chain->Add("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/jhong/SingleMu_FlatPt-2to100/crab_SingleMu200PU/190122_053556/0000/*.root/l1PiXTRKTree/L1PiXTRKTree");
 	     
 	     tree = chain;
 #endif
