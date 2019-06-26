@@ -11,6 +11,7 @@ First, using this command, all SW and efficiency codes are clone.
 + The address of sample can be managed in MakeSWMuon.h file.
 + In 'scatter' directory, you can make SW/ROI plots, scatter plots and fitting.
 
+'offi' branch -> Study using official samples.
 
 __run.sh and run.jds are running code for KISTI server.__
 
