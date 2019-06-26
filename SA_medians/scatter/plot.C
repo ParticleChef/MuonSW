@@ -72,8 +72,21 @@ void plot::Loop()
 	  std::vector<TVector3> D4;
 	  std::vector<TVector3> D5;
 
+	  //removing anti muon data (77 ~ 82, 87 ~ 88)
+
+	  TVector3 Disk_Phi;
+	  float genPhi;
+
+	  for(int i = 0 ; i < genPartN ; i ++){
+		  if(genPartId->at(i) == 13) genPhi = genPartPhi->at(i);
+	  }
+
 	  BS.push_back( TVector3(0,0,0));
 	  for(int i = 0; i < fRecHitN; i++){
+
+		  Disk_Phi.SetXYZ(fRecHitGx->at(i), fRecHitGy->at(i), fRecHitGz->at(i));
+		  if( fabs( genPhi - Disk_Phi ) > 0.1) continue;
+
 		  if( fRecHitDisk->at(i)== 1 ) D1.push_back( TVector3(fRecHitGx->at(i),fRecHitGy->at(i),fRecHitGz->at(i)) );
 		  if( fRecHitDisk->at(i)== 2 ) D2.push_back( TVector3(fRecHitGx->at(i),fRecHitGy->at(i),fRecHitGz->at(i)) );
 		  if( fRecHitDisk->at(i)== 3 ) D3.push_back( TVector3(fRecHitGx->at(i),fRecHitGy->at(i),fRecHitGz->at(i)) );
