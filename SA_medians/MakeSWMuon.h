@@ -409,39 +409,21 @@ public :
 #ifdef MakeSWMuon_cxx
 MakeSWMuon::MakeSWMuon(TTree *tree) : fChain(0) 
 {
-// if parameter tree is not specified (or zero), connect the file
-// used to generate this class and read the Tree.
-/*
-   if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/xrootd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/0000/SingleMuonNoPU_1.root");
-      if (!f || !f->IsOpen()) {
-         f = new TFile("/xrootd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/0000/SingleMuonNoPU_1.root");
-      }
-      TDirectory * dir = (TDirectory*)f->Get("/xrootd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/0000/SingleMuonNoPU_1.root:/l1PiXTRKTree");
-      dir->GetObject("L1PiXTRKTree",tree);
-
-   }
-   */
      if (tree == 0) {
 #ifdef SINGLE_TREE
-	     TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/xrootd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/*/");
-	   //  TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/xrootd/store/user/jhong/SingleMu_FlatPt-2to100/crab_SingleMuNoPU/190227_114927/0000/");
+//	     TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/xrootd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/*/");
+	     TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/xrootd/store/user/jhong/SingleMu_FlatPt-2to100/crab_SingleMuNoPU/190227_114927/0000/");
 	     if(!f || !f->IsOpen()){
-		     f = new TFile("/xrootd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/*/");
-		 //    f = new TFile("/xrootd/store/user/jhong/SingleMu_FlatPt-2to100/crab_SingleMuNoPU/190227_114927/0000/");
+//		     f = new TFile("/xrootd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/*/");
+		     f = new TFile("/xrootd/store/user/jhong/SingleMu_FlatPt-2to100/crab_SingleMuNoPU/190227_114927/0000/");
 	     }
 	     f->GetObject("l1PiXTRKTree/L1PiXTRKTree","");
 #else
 	     TChain *chain = new TChain("l1PiXTRKTree/L1PiXTRKTree","");
 
-//	     chain->Add("/xrootd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/*/*.root/L1PiXTRKTree");
-	   //  chain->Add("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/jhong/SingleMu_FlatPt-2to100/crab_SingleMuNoPU/190227_114927/0000/*.root/l1PiXTRKTree/L1PiXTRKTree");
-	     chain->Add("root://cms-xrdr.private.lo:2094//xrd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/0000/*.root/l1PiXTRKTree/L1PiXTRKTree");
+	     chain->Add("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/jhong/SingleMu_FlatPt-2to100/crab_SingleMuNoPU/190227_114927/0000/*.root/l1PiXTRKTree/L1PiXTRKTree");
+//	     chain->Add("root://cms-xrdr.private.lo:2094//xrd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/0000/*.root/l1PiXTRKTree/L1PiXTRKTree");
 //	     chain->Add("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/0000/*.root/l1PiXTRKTree/L1PiXTRKTree");
-//	     chain->Add("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/0001/*.root/l1PiXTRKTree/L1PiXTRKTree");
-//	     chain->Add("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/0002/*.root/l1PiXTRKTree/L1PiXTRKTree");
-//	     chain->Add("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/0003/*.root/l1PiXTRKTree/L1PiXTRKTree");
-//	     chain->Add("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/jhong/SingleMu_Pt2to200_Eta3p0_CMSSW_9_3_7_NoPU_D17test/crab_Muon0802/180802_123200/0004/*.root/l1PiXTRKTree/L1PiXTRKTree");
 	     
 	     tree = chain;
 #endif
